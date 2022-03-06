@@ -95,7 +95,6 @@ const singlespotify = async function singlespotify(inputs, flags) {
         );
         process.exit();
       }
-      // TODO: be able to deselect albums that we dont want added to the playlist
       let artistID = res.artists.items[0].id;
       spotifyApi.getArtistAlbums(artistID, token).then(async (res) => {
         for (let album of res.items) {
