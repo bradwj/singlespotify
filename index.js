@@ -99,10 +99,11 @@ const singlespotify = async function singlespotify(inputs, flags) {
       let artistID = res.artists.items[0].id;
       spotifyApi.getArtistAlbums(artistID, token).then(async (res) => {
         for (let album of res.items) {
-          allAlbums.push({ id: album.id, name: album.name, release_date: album.release_date });
+          allAlbums.push(album);
         }
         // create inquire check box with each album name 
-        spinner.stop();
+        spinner.stop(); // stop spinner for checkbox prompt
+        // TODO: show type of album next to each album choice
         inquirer
           .prompt([
             {
@@ -114,10 +115,10 @@ const singlespotify = async function singlespotify(inputs, flags) {
               choices: [
                 ...allAlbums.map(album => {
                   return {
-                    name: album.name,
+                    name: `[${album.album_type}] ${album.name} `,
                     value: album,
                     checked: true
-                  }
+                  };
                 })
               ]
             }
@@ -133,6 +134,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
                 )
               );
             }
+            spinner.start(); //resume spinner
           })
           .catch((err) => console.log(err));
       });
@@ -170,7 +172,7 @@ $ singlespotify "artist_name"`)
             (a, b) => new Date(a.release_date) - new Date(b.release_date)
             );
         }
-        // we only need to pass in the track uris to the API
+        // only need to pass in the track uris to the API
         allTracks = allTracks.map((track) => track.uri);
 
         // maximum of 100 tracks can be added per API request, so add 100 tracks at a time
