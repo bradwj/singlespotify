@@ -6,9 +6,9 @@
   "license": "MIT",
   "repository": "bradwj/singlespotify",
   "author": {
-    "name": "Kabir Virji",
-    "email": "kabirvirji@gmail.com",
-    "url": "http://kabirvirji.com"
+    "name": "Brad Johnson",
+    "email": "2021bradley@gmail.com",
+    "url": "https://github.com/bradwj"
   },
   "bin": {
     "singlespotify": "index.js"
