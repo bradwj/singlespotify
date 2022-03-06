@@ -2,6 +2,8 @@
 
 > Create Spotify playlists with all of the tracks of an artist through the command line!
 
+Forked from kabirvirji with a different purpose of creating a playlist with all the songs from an artist in order of their release date. 
+
 ![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
 ![](singlespotify.gif)
