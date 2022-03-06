@@ -1,6 +1,6 @@
 # singlespotify 🎵
 
-> Create Spotify playlists based on one artist through the command line
+> Create Spotify playlists with all of the tracks of an artist through the command line!
 
 ![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
@@ -31,25 +31,16 @@ Usage
       ? Enter your Spotify bearer token <bearer>
 
     Options
-      --name [-n] "playlist name"
+      --name [-n] "playlist name"    Name of the playlist
+      --descending [-d]              Sort the tracks in descending order by release date
 
     Example
       $ singlespotify "Kanye West" -n "My awesome playlist!"
-      ? Enter your Spotify username kabirvirji
+      ? Enter your Spotify username bradwj
       ? Enter your Spotify bearer token ************************************************************
 
-    For more information visit https://github.com/kabirvirji/singlespotify
+    For more information visit https://github.com/bradwj/singlespotify
 ```
 
-![](playlist.png)
-
-## Changelog
-- **03/15/17** Added [Inquirer](https://github.com/SBoudrias/Inquirer.js) and [conf](https://github.com/sindresorhus/conf) for authentication
-- **03/16/17** Removed `-a` flag and added option to choose playlist name with `-n` flag
-- **03/19/17** Used [update-notifier](https://github.com/yeoman/update-notifier) to notify users about updates 
-- **11/03/19** Updated to accommodate API changes 
-
-
-Shoutout to [kshvmdn](https://github.com/kshvmdn) for all the help!
-
+![image](https://user-images.githubusercontent.com/58205567/156913426-ddd0722b-c0f5-461a-80ac-69d89ab4c624.png)
 
