@@ -2,18 +2,13 @@
   "name": "singlespotify",
   "productName": "singlespotify",
   "version": "2.0.0",
-  "description": "Create Spotify playlists based on one artist through the command line!",
+  "description": "Create Spotify playlists with all of the tracks of an artist through the command line!",
   "license": "MIT",
-  "repository": "kabirvirji/singlespotify",
+  "repository": "bradwj/singlespotify",
   "author": {
     "name": "Kabir Virji",
     "email": "kabirvirji@gmail.com",
     "url": "http://kabirvirji.com"
-  },
-  "maintainers": {
-    "name": "Kabir Virji",
-    "email": "kabirvirji@gmail.com",
-    "url": "kabirvirji"
   },
   "bin": {
     "singlespotify": "index.js"

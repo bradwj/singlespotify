@@ -29,7 +29,7 @@ function auth() {
         }
       ])
       .then(function (answers) {
-        var answer = JSON.stringify(answers);
+        const answer = JSON.stringify(answers);
         config.set(answers);
         resolve(true);
       })
@@ -41,8 +41,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
   // "Young Thug"
   const artistName = inputs;
   // name of the playlist, optional parameter
-	let playlistName = flags["n"];
-	let descendingOrder = flags["d"];
+  let playlistName = flags["n"];
 
   if (playlistName === undefined || playlistName === true) {
     playlistName = `${artistName}: singlespotify`;
@@ -52,11 +51,11 @@ const singlespotify = async function singlespotify(inputs, flags) {
     spinner.fail("Failed");
     console.log(
       chalk.red(`
-	Oops! Remember to add an artist name!
+  Oops! Remember to add an artist name!
 
-	Example
-		singlespotify "Michael Jackson"
-		`)
+  Example
+    singlespotify "Michael Jackson"
+    `)
     );
     return;
   }
@@ -67,8 +66,8 @@ const singlespotify = async function singlespotify(inputs, flags) {
     config.clear();
     console.log(
       chalk.red(`
-	Oops! Artist name can't be empty. Please provide an artist name!
-		`)
+  Oops! Artist name can't be empty. Please provide an artist name!
+    `)
     );
     return;
   }
@@ -90,25 +89,52 @@ const singlespotify = async function singlespotify(inputs, flags) {
         config.clear();
         console.log(
           chalk.red(`
-	
-		Oops! That search didn't work. Try again please!
-			`)
+  
+    Oops! That search didn't work. Try again please!
+      `)
         );
         process.exit();
       }
+      // TODO: be able to deselect albums that we dont want added to the playlist
       let artistID = res.artists.items[0].id;
-      spotifyApi.getArtistAlbums(artistID, token).then((res) => {
+      spotifyApi.getArtistAlbums(artistID, token).then(async (res) => {
         for (let album of res.items) {
-          allAlbums.push({ id: album.id, release_date: album.release_date });
-
-          spotifyApi.getAlbumTracks(album.id, token).then((res) =>
-            allTracks.push(
-              ...res.items.map((track) => {
-                return { uri: track.uri, release_date: album.release_date };
-              })
-            )
-          );
+          allAlbums.push({ id: album.id, name: album.name, release_date: album.release_date });
         }
+        // create inquire check box with each album name 
+        spinner.stop();
+        inquirer
+          .prompt([
+            {
+              type: "checkbox",
+              message:
+                "Deselect any albums you wish to not be added to the playlist",
+              name: "albums",
+              checked: true,
+              choices: [
+                ...allAlbums.map(album => {
+                  return {
+                    name: album.name,
+                    value: album,
+                    checked: true
+                  }
+                })
+              ]
+            }
+          ])
+          .then(function (selectedAlbums) {
+            // add all the tracks from each selected playlist to allTracks list
+            for (let album of selectedAlbums.albums) {
+              spotifyApi.getAlbumTracks(album.id, token).then(res =>
+                allTracks.push(
+                  ...res.items.map((track) => {
+                    return { uri: track.uri, release_date: album.release_date };
+                  })
+                )
+              );
+            }
+          })
+          .catch((err) => console.log(err));
       });
     })
     .catch(async (err) => {
@@ -130,57 +156,39 @@ $ singlespotify "artist_name"`)
   var timeout = setInterval(function () {
     if (allTracks.length !== 0) {
       clearInterval(timeout);
-      // first create playlist with desired name
+      // create playlist with desired name
       spotifyApi.createPlaylist(playlistName, token).then((res) => {
-				console.log(allTracks.length + " tracks");
-				// sort tracks by ascending release date unless --descending [-d] flag is used
-				if (descendingOrder) {
-					allTracks = allTracks.sort(
+
+        // sort tracks by ascending release date unless --descending [-d] flag is used
+        if (flags["d"]) {
+          allTracks = allTracks.sort(
             (a, b) => new Date(b.release_date) - new Date(a.release_date)
           );
-				}
-				else {
-					allTracks = allTracks.sort(
-						(a, b) => new Date(a.release_date) - new Date(b.release_date)
-						);
-				}
-				console.log(allTracks);
-				// we only need to pass in the track uris to the API
-				allTracks = allTracks.map((track) => track.uri);
+        }
+        else {
+          allTracks = allTracks.sort(
+            (a, b) => new Date(a.release_date) - new Date(b.release_date)
+            );
+        }
+        // we only need to pass in the track uris to the API
+        allTracks = allTracks.map((track) => track.uri);
 
         // maximum of 100 tracks can be added per API request, so add 100 tracks at a time
-        if (allTracks.length > 100) {
-          let i = 0;
-          while (i < allTracks.length) {
-            console.log(allTracks.slice(i, i + 100).length + " tracks");
-            spotifyApi.populatePlaylist(
-              res.id,
-              allTracks.slice(i, i + 100),
-              token
-            );
-            i += 100;
-          }
-          spinner.succeed("Success!");
-          console.log(
-            chalk.green(`
-      Your playlist is ready!
-      It's called "${playlistName}"`)
+        let i = 0;
+        while (i < allTracks.length) {
+          spotifyApi.populatePlaylist(
+            res.id,
+            allTracks.slice(i, i + 100),
+            token
           );
-        } else {
-          spotifyApi.populatePlaylist(res.id, allTracks, token)
-            .then((res) => {
-              console.log(res);
-              spinner.succeed("Success!");
-              console.log(
-                chalk.green(`
-      Your playlist is ready!
-      It's called "${playlistName}"`)
-              );
-            })
-            .catch((err) => {
-              console.log(err.message);
-            });
+          i += 100;
         }
+        spinner.succeed("Success!");
+        console.log(
+          chalk.green(`
+    Your playlist is ready!
+    It's called "${playlistName}"`)
+        );
       });
     }
   }, 400);
@@ -196,8 +204,8 @@ const cli = meow(
       ? Enter your Spotify bearer token <bearer>
 
     Options
-      --name [-n] "playlist name"
-			--descending [-d]
+      --name [-n] "playlist name"    Name of the playlist
+      --descending [-d]              Sort the tracks in descending order by release date
 
     Example
       $ singlespotify -a "Michael Jackson" -n "MJ's Tracks"
@@ -210,10 +218,10 @@ const cli = meow(
   {
     alias: {
       n: "name"
-		},
-		alias: {
-			d: "descending"
-		}
+    },
+    alias: {
+      d: "descending"
+    }
   }
 );
 
