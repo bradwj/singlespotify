@@ -36,10 +36,10 @@ Usage
 
     Example
       $ singlespotify "Kanye West" -n "My awesome playlist!"
-      ? Enter your Spotify username kabirvirji
+      ? Enter your Spotify username bradwj
       ? Enter your Spotify bearer token ************************************************************
 
-    For more information visit https://github.com/kabirvirji/singlespotify
+    For more information visit https://github.com/bradwj/singlespotify
 ```
 
 ![image](https://user-images.githubusercontent.com/58205567/156913426-ddd0722b-c0f5-461a-80ac-69d89ab4c624.png)
